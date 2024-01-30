@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8">
+    <title>Jueguito de adivinar número</title>
+
+    <style>
+        html {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+        }
+        
+        body {
+            width: 50%;
+            max-width: 800px;
+            min-width: 480px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        p {
+            color: #555;
+            text-align: center;
+        }
+        
+        .form {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        label {
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .guessField {
+            width: 80px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        
+        .guessSubmit {
+            padding: 7px 15px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .guessSubmit:hover {
+            background-color: #45a049;
+        }
+        
+        .resultParas {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .guesses {
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .lastResult {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 10px;
+            display: inline-block;
+            border-radius: 5px;
+        }
+        
+        .lowOrHi {
+            font-size: 18px;
+            color: #333;
+            margin-top: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #2196f3;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>¡Adivina el número!</h1>
+
+    <p>Hemos seleccionado un número aleatorio entre 1 y 100. A ver si puedes adivinarlo en 10 turnos o menos. Te diremos si te pasaste por poco o por mucho.</p>
+
+    <div class="form">
+        <label for="guessField">Ingresa tu intento: </label>
+        <input type="number" min="1" max="100" required id="guessField" class="guessField">
+        <input type="submit" value="Intento" class="guessSubmit">
+    </div>
+
+    <div class="resultParas">
+        <p class="guesses"></p>
+        <p class="lastResult"></p>
+        <p class="lowOrHi"></p>
+    </div>
+
+    <script>
+        // Your JavaScript goes here
+        let randomNumber = Math.floor(Math.random() * 100) + 1;
+
+        const guesses = document.querySelector(".guesses");
+        const lastResult = document.querySelector(".lastResult");
+        const lowOrHi = document.querySelector(".lowOrHi");
+
+        const guessSubmit = document.querySelector(".guessSubmit");
+        const guessField = document.querySelector(".guessField");
+
+        let guessCount = 1;
+        let resetButton;
+
+        function checkGuess() {
+            let userGuess = Number(guessField.value);
+            if (guessCount === 1) {
+                guesses.textContent = "Intentos anteriores: ";
+            }
+            guesses.textContent += userGuess + " ";
+
+            if (userGuess === randomNumber) {
+                lastResult.textContent = "¡Felicidades! ¡Lo adivinaste!";
+                lastResult.style.backgroundColor = "#4caf50";
+                lowOrHi.textContent = "";
+                setGameOver();
+            } else if (guessCount === 10) {
+                lastResult.textContent = "¡¡¡Fin del juego!!!";
+                setGameOver();
+            } else {
+                lastResult.textContent = "¡Incorrecto!";
+                lastResult.style.backgroundColor = "#e53935";
+                if (userGuess < randomNumber) {
+                    lowOrHi.textContent = "¡El número es muy bajo!";
+                } else if (userGuess > randomNumber) {
+                    lowOrHi.textContent = "¡El número es muy grande!";
+                }
+            }
+
+            guessCount++;
+            guessField.value = "";
+            guessField.focus();
+        }
+
+        guessSubmit.addEventListener("click", checkGuess);
+
+        function setGameOver() {
+            guessField.disabled = true;
+            guessSubmit.disabled = true;
+            resetButton = document.createElement("button");
+            resetButton.textContent = "Iniciar nuevo juego";
+            document.body.append(resetButton);
+            resetButton.addEventListener("click", resetGame);
+        }
+
+        function resetGame() {
+            guessCount = 1;
+
+            const resetParas = document.querySelectorAll(".resultParas p");
+            for (let i = 0; i < resetParas.length; i++) {
+                resetParas[i].textContent = "";
+            }
+
+            resetButton.parentNode.removeChild(resetButton);
+
+            guessField.disabled = false;
+            guessSubmit.disabled = false;
+            guessField.value = "";
+            guessField.focus();
+
+            lastResult.style.backgroundColor = "#fff";
+
+            randomNumber = Math.floor(Math.random() * 100) + 1;
+        }
+    </script>
+</body>
+
+</html>
